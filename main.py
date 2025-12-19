@@ -44,8 +44,7 @@ def predict():
     if file.filename == "":
         return jsonify({"error": "Empty filename"}), 400
 
-    file_path = os.path.join(app.config["UPLOAD_FOLDER"], file.filename)
-    file.save(file_path)
+    
 
     try:
         img = preprocess_image(file_path)
@@ -70,4 +69,5 @@ def predict():
 if __name__ == "__main__":
     import os
     port = int(os.environ.get("PORT", 5000))
+
     app.run(host="0.0.0.0", port=port)
