@@ -21,14 +21,14 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_DIR
 model = tf.keras.models.load_model(MODEL_PATH)
 with open(LABELS_PATH, "r") as f:
     labels = json.load(f)   # {"0": "normal", "1": "fracture"}
-
-# ---------------- UTILS ----------------
-def preprocess_image(image_path):
-    img = Image.open(image_path).convert("RGB")
+def preprocess_image_file(file):
+    img = Image.open(file).convert("RGB")
     img = img.resize(IMG_SIZE)
     img = np.array(img).astype("float32") / 255.0
     img = np.expand_dims(img, axis=0)
     return img
+# ---------------- UTILS ----------------
+
 
 # ---------------- ROUTES ----------------
 @app.route("/")
@@ -71,3 +71,4 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
 
     app.run(host="0.0.0.0", port=port)
+
