@@ -21,12 +21,45 @@ app.config["UPLOAD_FOLDER"] = UPLOAD_DIR
 model = tf.keras.models.load_model(MODEL_PATH)
 with open(LABELS_PATH, "r") as f:
     labels = json.load(f)   # {"0": "normal", "1": "fracture"}
-def preprocess_image_file(file):
-    img = Image.open(file).convert("RGB")
-    img = img.resize(IMG_SIZE)
-    img = np.array(img).astype("float32") / 255.0
-    img = np.expand_dims(img, axis=0)
-    return img
+@app.route("/predict", methods=["POST"])
+def predict():
+    if "image" not in request.files:
+        return jsonify({"error": "No image uploaded"}), 400
+
+    file = request.files["image"]
+    if file.filename == "":
+        return jsonify({"error": "Empty filename"}), 400
+
+    try:
+        # 🔴 DOSYAYI KAYDET (EKSİK OLAN BUYDU)
+        filename = file.filename
+        file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        file.save(file_path)
+
+        # 🔴 PREPROCESS
+        img = preprocess_image(file_path)
+
+        # 🔴 MODEL PREDICT
+        pred = model.predict(img)
+
+        # sigmoid output varsayımı
+        prob = float(pred[0][0])
+
+        if prob >= 0.5:
+            prediction = labels["1"]
+            confidence = prob
+        else:
+            prediction = labels["0"]
+            confidence = 1 - prob
+
+        return jsonify({
+            "prediction": prediction,
+            "confidence": confidence
+        })
+
+    except Exception as e:
+        print("PREDICT ERROR:", e)
+        return jsonify({"error": str(e)}), 500
 # ---------------- UTILS ----------------
 
 
@@ -71,4 +104,5 @@ if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
 
     app.run(host="0.0.0.0", port=port)
+
 
