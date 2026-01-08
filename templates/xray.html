@@ -1,120 +1,115 @@
 
 
 <style>
-    :root{--bg:#0f1724;--card:#0b1220;--muted:#94a3b8;--accent:#06b6d4}
+:root{--bg:#0f1724;--card:#0b1220;--muted:#94a3b8;--accent:#06b6d4}
 
-    /* SORUN ÇIKARAN KISIM DÜZELTİLDİ */
-    /* ARTIK .container DEĞİL, SADECE BU SAYFAYA ÖZEL */
-    .xr-container{max-width:820px;margin:40px auto;padding:24px}
+.xr-container{max-width:820px;margin:40px auto;padding:24px}
+.card{background:rgba(255,255,255,0.03);border-radius:12px;padding:20px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+h1{margin:0 0 8px;font-size:20px}
+p.lead{margin:0 0 18px;color:var(--muted)}
 
-    .card{background:rgba(255,255,255,0.03);border-radius:12px;padding:20px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-    h1{margin:0 0 8px;font-size:20px}
-    p.lead{margin:0 0 18px;color:var(--muted)}
-    .uploader{border:2px dashed rgba(255,255,255,0.07);padding:28px;border-radius:10px;display:flex;gap:18px;align-items:center}
-    .uploader.dragover{background:linear-gradient(90deg, rgba(6,182,212,0.04), rgba(96,165,250,0.02));border-color:rgba(6,182,212,0.35)}
-    .preview{width:220px;height:220px;background:#061223;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-    .preview img{max-width:100%;max-height:100%;object-fit:contain}
-    .controls{flex:1}
-    .btn{display:inline-block;padding:10px 14px;border-radius:8px;border:0;background:var(--accent);color:#052025;font-weight:600;cursor:pointer}
-    .btn.secondary{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
-    .meta{margin-top:12px;color:var(--muted);font-size:14px}
-    .result{margin-top:16px;padding:12px;background:rgba(255,255,255,0.02);border-radius:8px;font-family:monospace;white-space:pre-wrap}
-    input[type=file]{display:none}
-    @media (max-width:700px){.uploader{flex-direction:column}.preview{width:180px;height:180px}}
+.uploader{border:2px dashed rgba(255,255,255,0.07);padding:28px;border-radius:10px;display:flex;gap:18px;align-items:center}
+.preview{width:220px;height:220px;background:#061223;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.preview img{max-width:100%;max-height:100%;object-fit:contain}
+
+.controls{flex:1}
+.btn{padding:10px 14px;border-radius:8px;border:0;background:var(--accent);color:#052025;font-weight:600;cursor:pointer}
+.btn.secondary{background:transparent;color:var(--muted);border:1px solid rgba(255,255,255,0.04)}
+
+.meta{margin-top:12px;color:var(--muted);font-size:14px}
+.result{margin-top:16px;padding:12px;background:rgba(255,255,255,0.02);border-radius:8px;font-family:monospace}
+input[type=file]{display:none}
+
+.plots{margin-top:24px;display:none}
+.plots img{max-width:100%;margin-bottom:12px;border-radius:8px;box-shadow:0 4px 12px rgba(0,0,0,0.4)}
+
+@media (max-width:700px){
+  .uploader{flex-direction:column}
+  .preview{width:180px;height:180px}
+}
 </style>
 
-<div class="xr-container">  <!-- ARTIK BUNU KULLANIYORUZ -->
-    <div class="card">
-        <h1>Görsel Tanıma - Resim Yükle</h1>
-        <p class="lead">Modelinizin tanıması için resim seçin veya buraya sürükleyin.</p>
+<div class="xr-container">
+  <div class="card">
+    <h1>Görsel Tanıma</h1>
+    <p class="lead">Model için resim seç veya sürükle</p>
 
-        <div id="uploader" class="uploader">
-            <div class="preview" id="preview">
-                <span id="previewText">Önizleme yok</span>
-            </div>
+    <div class="uploader">
+      <div class="preview" id="preview">Önizleme yok</div>
 
-            <div class="controls">
-                <div style="display:flex;gap:8px;align-items:center">
-                    <label class="btn" for="fileInput">Resim seç</label>
-                    <button type="button" class="btn secondary" id="sendBtn">Modeli çağır</button>
-                    <button type="button" class="btn secondary" id="clearBtn">Temizle</button>
-                </div>
-
-                <div class="meta">
-                    Desteklenen: JPG, PNG. Maksimum: 10 MB.<br>
-                    Endpoint: <code>/predict</code>
-                </div>
-
-                
-            </div>
-        </div>
-
-        <input id="fileInput" type="file" accept="image/*" />
+      <div class="controls">
+        <label class="btn" for="fileInput">Resim Seç</label>
+        <button class="btn secondary" id="sendBtn">Modeli Çağır</button>
+        <div class="meta">JPG / PNG • Max 10MB • <code>/predict</code></div>
+      </div>
     </div>
-    <div style="height: 200px;"></div
-        >
-        <div class="result" id="result" style="display:none"></div>
 
-<!-- 🔽 BURAYI EKLE -->
-<div id="plotBox" style="margin-top:16px; display:none">
-    <img id="plotImg" src="" style="max-width:100%; border-radius:8px;">
+    <input id="fileInput" type="file" accept="image/*">
+    <div id="result" class="result" style="display:none"></div>
+
+    <!-- 🔽 GRAFİKLER -->
+    <div id="plots" class="plots">
+      <h3>Model Performansı</h3>
+      <img id="conImg">
+      <img id="rocImg">
+      <img id="prImg">
+    </div>
+  </div>
 </div>
-</div>
+
 <script>
 const fileInput = document.getElementById("fileInput");
+const preview = document.getElementById("preview");
 const sendBtn = document.getElementById("sendBtn");
 const resultBox = document.getElementById("result");
-const preview = document.getElementById("preview");
-const plotBox = document.getElementById("plotBox");
-const plotImg = document.getElementById("plotImg");
-plotImg.src = "/static/plotted.png?t=" + Date.now();
-plotBox.style.display = "block";
+
+const plots = document.getElementById("plots");
+const conImg = document.getElementById("conImg");
+const rocImg = document.getElementById("rocImg");
+const prImg  = document.getElementById("prImg");
+
 // Önizleme
 fileInput.addEventListener("change", () => {
-    const file = fileInput.files[0];
-    if (!file) return;
-
-    preview.innerHTML = "";
-    const img = document.createElement("img");
-    img.src = URL.createObjectURL(file);
-    preview.appendChild(img);
+  const file = fileInput.files[0];
+  if (!file) return;
+  preview.innerHTML = "";
+  const img = document.createElement("img");
+  img.src = URL.createObjectURL(file);
+  preview.appendChild(img);
 });
 
 // Predict
-sendBtn.addEventListener("click", async (e) => {
-    e.preventDefault();
+sendBtn.addEventListener("click", async () => {
+  if (!fileInput.files.length) {
+    alert("Resim seç");
+    return;
+  }
 
-    if (!fileInput.files.length) {
-        alert("Resim seç");
-        return;
-    }
+  resultBox.style.display = "block";
+  resultBox.innerText = "🔍 Tahmin yapılıyor...";
 
-    resultBox.style.display = "block";
-    resultBox.innerHTML = "🔍 Tahmin yapılıyor...";
+  const fd = new FormData();
+  fd.append("image", fileInput.files[0]);
 
-    const formData = new FormData();
-    formData.append("image", fileInput.files[0]);
+  try {
+    const res = await fetch("/predict", { method:"POST", body: fd });
+    const data = await res.json();
 
-    try {
-        const res = await fetch("/predict", {
-            method: "POST",
-            body: formData
-        });
+    resultBox.innerHTML = `
+      <b>Sonuç:</b> ${data.prediction}<br>
+      <b>Güven:</b> %${(data.confidence*100).toFixed(1)}
+    `;
 
-        const data = await res.json();
+    // 🔥 GRAFİKLERİ YÜKLE
+    const t = Date.now();
+    conImg.src = "/static/con.png?t=" + t;
+    rocImg.src = "/static/roc.png?t=" + t;
+    prImg.src  = "/static/pr.png?t=" + t;
+    plots.style.display = "block";
 
-        // 🔥 MODEL SONUCUNU OKU
-        const tahmin = data.prediction;
-        const conf = (data.confidence * 100).toFixed(1);
-
-        resultBox.innerHTML = `
-            <b>Sonuç:</b> ${tahmin}<br>
-            <b>Güven:</b> %${conf}
-        `;
-
-    } catch (err) {
-        resultBox.innerHTML = "❌ Tahmin sırasında hata oluştu";
-        console.error(err);
-    }
+  } catch (e) {
+    resultBox.innerText = "❌ Hata oluştu";
+    console.error(e);
+  }
 });
 </script>
